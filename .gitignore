@@ -1,0 +1,14 @@
+# Terraform stuff
+*.tfstate
+*.tfstate.*
+crash.log
+.terraform/
+.terraform.lock.hcl
+
+# Secrets
+*.pem
+*.key
+*.env
+
+#Folder with journaling
+chestii interesante/
