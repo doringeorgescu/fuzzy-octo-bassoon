@@ -17,6 +17,12 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.14.2  # Adjust the version as needed
+
+    - name: Create OCI Private Key File
+      run: |
+        echo "${{ secrets.PRIVATE_KEY }}" > oci_api_key.pem
+        chmod 600 oci_api_key.pem
+
     - name: Terraform Init
       run: terraform init
 
