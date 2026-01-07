@@ -19,6 +19,8 @@ jobs:
         terraform_version: 1.14.2  
 
     - name: Terraform Init
+      env: 
+        TF_VAR_namespace: ${{ secrets.NAMESPACE }}
       run: terraform init
 
     - name: Terraform Validate
