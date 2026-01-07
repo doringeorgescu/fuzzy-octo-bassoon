@@ -18,25 +18,6 @@ jobs:
       with:
         terraform_version: 1.14.2  # Adjust the version as needed
 
-    - name: Create OCI Private Key File
-      run: |
-        echo "=== hai sa vedem secretul  ==="
-        echo "${{ secrets.PRIVATE_KEY }}"
-        echo "si acum fingerprintu: "
-        echo "${{ secrets.FINGERPRINT }}"
-        echo "${{ secrets.PRIVATE_KEY }}" > oci_api_key.pem
-        chmod 600 oci_api_key.pem
-        # DEBUG: Verify file exists and is readable
-          echo "=== DEBUG INFO ==="
-          echo "Current directory: $(pwd)"
-          echo "File exists? $(ls -la oci_api_key.pem 2>/dev/null && echo 'YES' || echo 'NO')"
-          echo "File permissions: $(stat -c '%A %U %G' oci_api_key.pem 2>/dev/null || echo 'File not found')"
-          echo "File content first 3 lines:"
-          head -3 oci_api_key.pem || echo "Cannot read file"
-          echo "File content last 3 lines:"
-          tail -3 oci_api_key.pem || echo "Cannot read file"
-          echo "================="
-
     - name: Terraform Init
       run: terraform init
 
@@ -47,7 +28,7 @@ jobs:
       env:
           # These MUST be set in GitHub UI → Secrets
           TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
-          TF_VAR_private_key_path: ./oci_api_key.pem
+          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
       run: terraform plan
       
     - name: Terraform Apply
