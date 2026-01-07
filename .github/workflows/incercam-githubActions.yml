@@ -20,7 +20,8 @@ jobs:
 
     - name: Terraform Init
       env: 
-        TF_VAR_namespace: ${{ secrets.NAMESPACE }}
+          TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
+          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
       run: terraform init
 
     - name: Terraform Validate
