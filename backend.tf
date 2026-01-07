@@ -3,6 +3,6 @@ terraform {
     bucket   = "terraform-state-bucket"
     key      = "terraform.tfstate"
     region   = "us-ashburn-1"
-    namespace = ocicustomeropshb
+    namespace = "ocicustomeropshb"
   }
 }
