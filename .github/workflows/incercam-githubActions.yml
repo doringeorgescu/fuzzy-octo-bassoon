@@ -27,5 +27,5 @@ jobs:
       run: terraform plan
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Apply only on pushes to the main branch
-      run: terraform apply -auto-approve
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Apply only to pushes to the main branch
+      run: terraform apply -auto-appro
