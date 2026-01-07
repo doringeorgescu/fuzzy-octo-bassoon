@@ -22,6 +22,8 @@ jobs:
       run: |
         echo "=== hai sa vedem secretul  ==="
         echo "${{ secrets.PRIVATE_KEY }}"
+        echo "si acum fingerprintu: "
+        echo "${{ secrets.FINGERPRINT }}"
         echo "${{ secrets.PRIVATE_KEY }}" > oci_api_key.pem
         chmod 600 oci_api_key.pem
         # DEBUG: Verify file exists and is readable
