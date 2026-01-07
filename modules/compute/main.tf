@@ -4,7 +4,7 @@ resource "oci_core_instance" "Instanta_Pluto" {
     compartment_id = "ocid1.compartment.oc1..aaaaaaaaozjgrityvm6qhdbbc66wugj6s62awro6owqmyjbqhxb24duea7gq"
     shape = "VM.Standard.E6.Flex"
     shape_config {
-        ocpus = "4"
+        ocpus = "8"
         memory_in_gbs = "36"
     }
     source_details {
