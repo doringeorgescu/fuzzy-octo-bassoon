@@ -20,6 +20,8 @@ jobs:
 
     - name: Create OCI Private Key File
       run: |
+        echo "=== hai sa vedem secretul  ==="
+        echo "${{ secrets.PRIVATE_KEY }}"
         echo "${{ secrets.PRIVATE_KEY }}" > oci_api_key.pem
         chmod 600 oci_api_key.pem
         # DEBUG: Verify file exists and is readable
