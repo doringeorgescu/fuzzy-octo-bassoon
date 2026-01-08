@@ -20,9 +20,15 @@ jobs:
 
     - name: Terraform Init
       env: 
+          OCI_TENANCY_OCID: "ocid1.tenancy.oc1..aaaaaaaaouminldguaddw4th2rysvt2wezzx2nscn6snhkrc72dn6wjs27gq"
+          OCI_USER_OCID: "ocid1.user.oc1..aaaaaaaasfs5r4eij324barnbwkwcghkg53qg7w4s2but3rvtthfjozgh2zq"
+          OCI_REGION: "us-ashburn-1"
           TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
           TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
-      run: terraform init
+      run: |
+           terraform init \
+            -backend-config="namespace=${{ secrets.NAMESPACE }}" \
+            -input=false
 
     - name: Terraform Validate
       run: terraform validate
