@@ -9,6 +9,22 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
+    env:
+      # Variabile pentru BACKEND (folosite în init)
+      OCI_TENANCY_OCID: "ocid1.tenancy.oc1..aaaaaaaaouminldguaddw4th2rysvt2wezzx2nscn6snhkrc72dn6wjs27gq"
+      OCI_USER_OCID: "ocid1.user.oc1..aaaaaaaasfs5r4eij324barnbwkwcghkg53qg7w4s2but3rvtthfjozgh2zq"
+      OCI_REGION: "us-ashburn-1"
+      OCI_FINGERPRINT: ${{ secrets.FINGERPRINT }}
+      # Cheia privată ca variabilă de mediu
+      OCI_PRIVATE_KEY_CONTENT: ${{ secrets.PRIVATE_KEY }}
+      
+      # Variabile pentru PROVIDER (folosite în plan/apply)
+      TF_VAR_tenancy_ocid: "ocid1.tenancy.oc1..aaaaaaaaouminldguaddw4th2rysvt2wezzx2nscn6snhkrc72dn6wjs27gq"
+      TF_VAR_user_ocid: "ocid1.user.oc1..aaaaaaaasfs5r4eij324barnbwkwcghkg53qg7w4s2but3rvtthfjozgh2zq"
+      TF_VAR_region: "us-ashburn-1"
+      TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
+      TF_VAR_private_key_path: "/tmp/oci_private_key.pem"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -18,32 +34,77 @@ jobs:
       with:
         terraform_version: 1.14.2  
 
-    - name: Terraform Init
-      env: 
-          OCI_TENANCY_OCID: "ocid1.tenancy.oc1..aaaaaaaaouminldguaddw4th2rysvt2wezzx2nscn6snhkrc72dn6wjs27gq"
-          OCI_USER_OCID: "ocid1.user.oc1..aaaaaaaasfs5r4eij324barnbwkwcghkg53qg7w4s2but3rvtthfjozgh2zq"
-          OCI_REGION: "us-ashburn-1"
-          TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
-          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
+    - name: Create OCI Configuration Files
       run: |
-           terraform init \
-            -backend-config="namespace=${{ secrets.NAMESPACE }}" \
-            -input=false
+        # 1. Creează directorul .oci
+        mkdir -p ~/.oci
+        
+        # 2. Creează fișierul de configurație DEFAULT
+        cat > ~/.oci/config <<EOF
+        [DEFAULT]
+        tenancy=${OCI_TENANCY_OCID}
+        user=${OCI_USER_OCID}
+        fingerprint=${OCI_FINGERPRINT}
+        region=${OCI_REGION}
+        key_file=~/.oci/oci_api_key.pem
+        EOF
+        
+        # 3. Creează fișierul cu cheia privată
+        echo "${OCI_PRIVATE_KEY_CONTENT}" > ~/.oci/oci_api_key.pem
+        chmod 600 ~/.oci/oci_api_key.pem
+        
+        # 4. Creează și fișierul pentru TF_VAR_private_key_path
+        echo "${OCI_PRIVATE_KEY_CONTENT}" > /tmp/oci_private_key.pem
+        chmod 600 /tmp/oci_private_key.pem
+        
+        echo "=== OCI Config Created ==="
+        echo "Config file:"
+        cat ~/.oci/config
+        echo -e "\nPrivate key file exists:"
+        ls -la ~/.oci/oci_api_key.pem
+
+    - name: Debug - Check Configuration
+      run: |
+        echo "=== DEBUG INFO ==="
+        echo "OCI_TENANCY_OCID: ${OCI_TENANCY_OCID:0:20}..."
+        echo "OCI_USER_OCID: ${OCI_USER_OCID:0:20}..."
+        echo "OCI_REGION: $OCI_REGION"
+        echo "OCI_FINGERPRINT exists: ${#OCI_FINGERPRINT} chars"
+        echo "OCI_PRIVATE_KEY_CONTENT exists: ${#OCI_PRIVATE_KEY_CONTENT} chars"
+        
+        echo -e "\n=== BACKEND CONFIG FROM CODE ==="
+        grep -A10 "backend.*oci" *.tf || echo "No backend found in root"
+        
+        echo -e "\n=== FILES CREATED ==="
+        ls -la ~/.oci/
+        ls -la /tmp/oci_private_key.pem
+
+    - name: Terraform Init (with debug)
+      run: |
+        echo "=== RUNNING TERRAFORM INIT ==="
+        
+        # Rulează cu debug pentru a vedea exact eroarea
+        terraform init \
+          -backend-config="namespace=${{ secrets.NAMESPACE }}" \
+          -input=false \
+          -no-color 2>&1 | tee init_output.log
+        
+        # Verifică dacă a funcționat
+        if [ $? -eq 0 ]; then
+          echo "✅ Terraform init successful"
+        else
+          echo "❌ Terraform init failed"
+          echo "=== ERROR DETAILS ==="
+          grep -i -B5 -A5 "error\|fail\|tenancy\|config" init_output.log || cat init_output.log
+          exit 1
+        fi
 
     - name: Terraform Validate
       run: terraform validate
 
     - name: Terraform Plan
-      env:
-          # These MUST be set in GitHub UI → Secrets
-          TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
-          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
-      run: terraform plan 
-      
+      run: terraform plan -no-color
+
     - name: Terraform Apply
-      env:
-          # These MUST be set in GitHub UI → Secrets
-          TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
-          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Aapply only to pushes to the main branch
-      run: terraform apply -auto-approve
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -no-color
