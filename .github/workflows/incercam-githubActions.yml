@@ -91,9 +91,9 @@ jobs:
         
         # Verifică dacă a funcționat
         if [ $? -eq 0 ]; then
-          echo "✅ Terraform init successful"
+          echo "Terraform init successful"
         else
-          echo "❌ Terraform init failed"
+          echo "Terraform init failed"
           echo "=== ERROR DETAILS ==="
           grep -i -B5 -A5 "error\|fail\|tenancy\|config" init_output.log || cat init_output.log
           exit 1
