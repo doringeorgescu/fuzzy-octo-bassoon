@@ -103,8 +103,10 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -no-color
+      env:
+        TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
+      run: terraform plan -auto-approve -out=tfplan 
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -no-color
+      run: terraform apply tfplan -auto-approve -no-color
