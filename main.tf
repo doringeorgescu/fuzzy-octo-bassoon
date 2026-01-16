@@ -1,6 +1,6 @@
 module "vm1" {
   source       = "./modules/compute"
-  nume_instanta = "Instanta Pluto"
+  nume_instanta = "Instanta memestoica"
   subnetID = oci_core_subnet.subnet_pluto.id
   fingerprint = var.fingerprint
   # private_key_path = var.private_key_path

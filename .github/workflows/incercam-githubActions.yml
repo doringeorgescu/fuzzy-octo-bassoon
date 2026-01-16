@@ -63,23 +63,7 @@ jobs:
         echo -e "\nPrivate key file exists:"
         ls -la ~/.oci/oci_api_key.pem
 
-    - name: Debug - Check Configuration
-      run: |
-        echo "=== DEBUG INFO ==="
-        echo "OCI_TENANCY_OCID: ${OCI_TENANCY_OCID:0:20}..."
-        echo "OCI_USER_OCID: ${OCI_USER_OCID:0:20}..."
-        echo "OCI_REGION: $OCI_REGION"
-        echo "OCI_FINGERPRINT exists: ${#OCI_FINGERPRINT} chars"
-        echo "OCI_PRIVATE_KEY_CONTENT exists: ${#OCI_PRIVATE_KEY_CONTENT} chars"
-        
-        echo -e "\n=== BACKEND CONFIG FROM CODE ==="
-        grep -A10 "backend.*oci" *.tf || echo "No backend found in root"
-        
-        echo -e "\n=== FILES CREATED ==="
-        ls -la ~/.oci/
-        ls -la /tmp/oci_private_key.pem
-
-    - name: Terraform Init (with debug)
+    - name: Terraform Init
       run: |
         echo "=== RUNNING TERRAFORM INIT ==="
         
@@ -88,16 +72,6 @@ jobs:
           -backend-config="namespace=${{ secrets.NAMESPACE }}" \
           -input=false \
           -no-color 2>&1 | tee init_output.log
-        
-        # Verifică dacă a funcționat
-        if [ $? -eq 0 ]; then
-          echo "Terraform init successful"
-        else
-          echo "Terraform init failed"
-          echo "=== ERROR DETAILS ==="
-          grep -i -B5 -A5 "error\|fail\|tenancy\|config" init_output.log || cat init_output.log
-          exit 1
-        fi
 
     - name: Terraform Validate
       run: terraform validate
