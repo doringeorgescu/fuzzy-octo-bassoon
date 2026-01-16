@@ -8,7 +8,7 @@ resource "oci_core_instance" "Instanta_Pluto" {
         memory_in_gbs = "36"
     }
     source_details {
-        source_id = "ocid1.image.oc1.iad.aaaaaaaahaqglmjvh2emogamuliyqodir7k6cglw5s6zb5oqkd6qsaoqw2va"
+        source_id = "ocid1.image.oc1.iad.aaaaaaaaglxne5nh73mxqppl3fkzkqdlda3k22y6oyxcvy6gcaxxsym54mca"
         source_type = "image"
     }
 
