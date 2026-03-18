@@ -1,0 +1,75 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Deci practic daca vrei sa iei ca model o resursa din OCI, po\uc0\u539 i sa I dai import, terraform o \'93copiaza\'94 in state file, si de acolo practic o iei si o faci tu ca resursa, nu po\u539 i s o iei cu copy-paste \
+\
+==============================================================================\
+\
+Mda deci asta cu availability domains urile mi a cam dat b\uc0\u259 t\u259 i de cap\'85\
+\
+A trebuit sa fac fi\uc0\u537 ierul \u259 la availability-domains.tf in care sa pun asta un resource block cu oci identity availability domains care preia practic AD urile din compartment sau tenancy. E, si dup\u259  ce ai asta faci un fi\u537 ier cu outputs, in care trece terraform AD urile\'85. Dar n am \'een\u539 eles exact care i faza cu fi\u537 ierele astea 2, mai ales cu asta outputs cum func\u539 ioneaz\u259 , a\u537 a ca trebuie investigat\
+\
+https://docs.oracle.com/en-us/iaas/Content/dev/terraform/tutorials/tf-provider.htm#top\
+\
+Deci In route table nu era facuta route rule cater IGW, d aia nu mergea conexiunea pe port 22, nu era de la security list\'85\
+==============================================================================\
+\
+Asa deci bagi un export TF_VAR_blabla = \'94aicitrecivariabila\'94\
+\
+Si in terraform File pui var.blabla si ar trebui sa mearg\uc0\u259 \
+\
+Si asta cu variabilele ori pui din un fi\uc0\u537 ier de variabile .tfvars dar aparent tre\'92 sa l adaugi in Git Ignore ca sa nu l pun\u259  pe GIT sau pe altundeva ori dai un export variabila ca mai sus si e o variabila global\u259  salvat\u259  pentru sesiune de bash\'85 \
+\
+Misto, nu? Practic doar de unde iei variabila difer\uc0\u259 \'85\
+\
+==============================================================================\
+\
+Ok deci sa zicem ca le am dat cat de c\'e2t de cap la asta cu module, doar ca nu \'een\uc0\u539 eleg ce de m a l\u259 sat sa dau apply doar daca am adaugat provider si in modulul compute, cel mic\'85\
+\
+Daca nu, c\'e2nd sa fac\uc0\u259  instan\u539 ele din modulul compute, d\u259 dea not authenticated\'85.\
+\
+De\uc0\u537 i ar fi trebuit sa mearg\u259 \'85 L am ad\u259 ugat si dup\u259  a mers\
+\
+Aparent putem folosi Alias??? Tre\'92 sa vad asta cum e ca sa nu mai pun provider.tf de 2 ori\
+\
+==============================================================================\
+\
+A\uc0\u537 a practic le am folosit ca ni\u537 te variabile si le am pus in modul direct, ele fiind exportate din variabila globala\
+\
+\
+\
+Si cu GitHub, aparent \'eel po\uc0\u539 i face sa foloseasc\u259  chei de SSH\
+\
+=============================================================================\
+\
+A\uc0\u537 a, deci in GitHub sau GitHub actions, pull requests e gen c\'e2nd rogi, \'93request\'94 main branch ul sa \'ee\u539 i trag\u259  codul t\u259 u de pe branch ul secundar, main branch request to pull your code, n are treaba neaparat cu git push / pull.\
+\
+=============================================================================\
+\
+Am aflat ca practic se pun secretele in GitHub repo\'92s secrets, si terraform le ia de acolo.\
+\
+============================================================================\
+\
+Also, \'eemi trebuie un shared backend terraform state, ca altfel statefile ul creat in memoria calculatorului si mai ales in memoria workerului de GitHub actions o sa \'eemi duplice resursele.\
+\
+=========================================================================\
+\
+\
+Pentru grafana si open telemetry, am folosit direct de pe docker hub imaginea grafana/o\uc0\u539 el-telemetry ca sa nu mai instalez eu  alea manual.\
+\
+docker run -p 3000:3000 -p 4317:4317 -p 4318:4318 --rm -ti grafana/otel-lgtm \
+\
+Daaaaaar\
+\
+Mai bine instalezi separat grafana, prometheus si node exporter care practic traduce metricile astfel \'eenc\'e2t sa \uc0\u537 tie grafana sa le citeasc\u259 \'85 si e un dashboard 1860 f\u259 cut direct pentru node exporter asta\
+https://grafana.com/grafana/dashboards/12486-node-exporter-full/\
+\
+\
+\
+\
+\
+}

@@ -1,14 +1,14 @@
 resource "oci_core_instance" "Instanta_Pluto" {
     # Required
-    availability_domain = "ntyR:US-ASHBURN-AD-1"
-    compartment_id = "ocid1.compartment.oc1..aaaaaaaaozjgrityvm6qhdbbc66wugj6s62awro6owqmyjbqhxb24duea7gq"
-    shape = "VM.Standard.E6.Flex"
+    availability_domain = "anmg:eu-amsterdam-1-AD-1 "
+    compartment_id = "ocid1.compartment.oc1..aaaaaaaa7s426i4aiawhimn4n32vxegdz4rdr6is7yuxnzyfypkuw73ejmkq"
+    shape = "VM.Standard.E2.1.Micro"
     shape_config {
-        ocpus = "8"
-        memory_in_gbs = "36"
+        ocpus = "1"
+        memory_in_gbs = "1"
     }
     source_details {
-        source_id = "ocid1.image.oc1.iad.aaaaaaaaglxne5nh73mxqppl3fkzkqdlda3k22y6oyxcvy6gcaxxsym54mca"
+        source_id = "ocid1.image.oc1.eu-amsterdam-1.aaaaaaaawpl3bd233zq3kfiu3yby4k6bvwti4kcyfxvph43f5wuwxoktqwcq"
         source_type = "image"
     }
 
@@ -19,7 +19,7 @@ resource "oci_core_instance" "Instanta_Pluto" {
         subnet_id = var.subnetID
     }
     metadata = {
-        ssh_authorized_keys = file("ssh-key-2025-08-15.key.pub")
+        ssh_authorized_keys = file("ssh-key-2026-03-18.key.pub")
     } 
     preserve_boot_volume = false
 }

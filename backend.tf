@@ -1,9 +1,9 @@
 terraform {
   backend "oci" {
-    bucket   = "terraform-state-bucket"
+    bucket   = "bucket-terraform"
     key      = "terraform.tfstate"
-    region   = "us-ashburn-1"
-    namespace = "ocicustomeropshb"
+    region   = "eu-amsterdam-1"
+    namespace = "ax8jw5kp59s1"
     auth = "APIKey"
   }
 }
