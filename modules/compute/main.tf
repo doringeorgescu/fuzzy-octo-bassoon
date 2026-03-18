@@ -1,6 +1,6 @@
 resource "oci_core_instance" "Instanta_Pluto" {
     # Required
-    availability_domain = "anmg:eu-amsterdam-1-AD-1 "
+    availability_domain = "anmg:eu-amsterdam-1-AD-1"
     compartment_id = "ocid1.compartment.oc1..aaaaaaaa7s426i4aiawhimn4n32vxegdz4rdr6is7yuxnzyfypkuw73ejmkq"
     shape = "VM.Standard.E2.1.Micro"
     shape_config {
